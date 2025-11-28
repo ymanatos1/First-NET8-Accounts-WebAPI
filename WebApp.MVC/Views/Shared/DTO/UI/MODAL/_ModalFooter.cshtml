@@ -1,0 +1,67 @@
+﻿@using WebApp.Lib.Data.ViewModels
+@using WebApp.Lib.Data.ViewModels.Base
+
+@model VMBase   // i.e. AccountVM, AccountCategoryVM
+
+@{
+    var showOpBtn = Model.CRUD_TYPE != VMBase.CRUD.READ;
+    var cancelBtnCaption = Model.CRUD_TYPE == VMBase.CRUD.READ ? "Close" : "Cancel";
+}
+
+<div class="modal-footer main-footer d-flex align-items-center">
+
+    <!-- LEFT SIDE -->
+    @* <button type="button" class="btn btn-secondary dirty-reset d-none me-auto">
+        Reset Changes
+    </button> *@
+    <button type="button"
+            class="btn btn-secondary dirty-reset d-none me-auto">
+        Reset Changes
+    </button>
+    @* <span id="dirtyBadge" class="badge bg-danger ms-2">
+        Unsaved (0)
+    </span> *@
+
+    <div></div>
+
+    <!-- RIGHT SIDE -->
+    <div class="text-end small">
+        @if (Model.IsModal)
+        {
+            @* MODAL MODE → switch to full form *@
+
+            @if (Model.EntryId > 0)
+            {
+                <a asp-controller="@Model.Path" asp-action="@Model.PAGE_NAME" asp-route-id="@(Model.EntryId)">Switch to full form »</a>
+            }
+            else
+            {
+                <a asp-controller="@Model.Path" asp-action="@Model.PAGE_NAME">Switch to full form »</a>
+            }
+
+            @if (showOpBtn)
+            {
+                <button type="submit" class="btn @Model.ButtonUIStyle">@Model.ButtonUICaption</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@cancelBtnCaption</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@cancelBtnCaption</button>
+            }
+        }
+
+        else
+        {
+            @* FULL PAGE MODE → back to Index *@
+
+            <a asp-controller="@Model.Path" asp-action="Index"> « Back to @Model.DtoNamePlural list</a>
+
+            @if (showOpBtn)
+            {
+                <button type="submit" class="btn @Model.ButtonUIStyle">@Model.ButtonUICaption</button>
+            }
+            <a class="btn btn-secondary" asp-controller="@Model.Path" asp-action="Index">@cancelBtnCaption</a>
+        }
+    </div>
+
+</div>

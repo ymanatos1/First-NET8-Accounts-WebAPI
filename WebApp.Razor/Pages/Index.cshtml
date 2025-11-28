@@ -1,0 +1,70 @@
+﻿@page
+@using WebApp.Razor.Pages
+@* @using WebAPI.Data.Models *@
+
+@model IndexModel
+
+@{
+    //ViewData["Title"] = "Home page";
+    //ViewData["Accounts"] = await _service.GetAsync();
+
+    //var accounts = (IEnumerable<Account>)ViewData["Accounts"]!;
+}
+
+,<div>
+    <button class="btn btn-primary mb-3"
+            onclick="window.location.href='/accounts'">
+        <i class="bi bi-person"></i> Go to Accounts Full Management
+    </button>
+    <br />
+
+    <button class="btn btn-primary mb-3"
+            onclick="window.location.href='/accountcategories'">
+        <i class="bi bi-person"></i> Go to Account Categories Full Management
+    </button>
+    <br />
+
+
+    @* @await Html.PartialAsync("DTO/_ResponsiveAccountsTable", (Entries: Model.AccountsList, Path: "Accounts")) *@
+
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/site.js">
+    </script>
+
+<script>
+    /*
+        const url = 'https://localhost:7171/api/accounts';
+        //const url = 'https://localhost:44346/api/accounts';
+        //const url = 'http://localhost:5001/api/accounts';
+        let domAccountsList = document.getElementById('accounts-list-js');
+
+        //show(`url = ${url}`);
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => showAccounts(data))
+            .catch(ex => {
+                //alert('Error: ' + ex);
+                show('Error: ' + ex);
+                console.error(ex);
+            });
+
+        function showAccounts(accounts) {
+            accounts.forEach(account => {
+                show(`${account.name} : ${account.description}`);
+            }
+        )};
+
+        function show(text) {
+                let li = document.createElement('li');
+                li.appendChild(
+                    document.createTextNode(text));
+                domAccountsList.appendChild(li);
+        };
+    */
+
+</script>
+}

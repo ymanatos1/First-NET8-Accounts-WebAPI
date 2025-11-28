@@ -1,0 +1,9 @@
+﻿@page
+
+@model AccountCategoriesEditModel
+@{
+    Layout = null;
+}
+
+<!-- This wrapper binds the PageModel to the partial -->
+@await Html.PartialAsync(Model.ModelVM.PARTIAL_NAME, Model.ModelVM)

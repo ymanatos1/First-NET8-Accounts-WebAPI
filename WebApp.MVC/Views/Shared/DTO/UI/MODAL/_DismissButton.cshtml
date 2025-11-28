@@ -1,0 +1,16 @@
+﻿@model string   // i.e. "modal", "alert"
+
+@{
+}
+
+<!-- Close button -->
+@if (Model == "modal")
+{
+    <button type="button" class="btn-close m-2" data-bs-dismiss="modal"></button>
+}
+else if (Model == "alert")
+{
+    @* @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "alert") *@
+
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+}

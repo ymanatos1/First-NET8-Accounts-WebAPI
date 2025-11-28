@@ -1,0 +1,21 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountCategoryVM
+
+@{
+    Layout = null;
+
+    var actionUrl = $"/{Model.Path}/{Model.PAGE_NAME}Quick";
+}
+
+<form class="dirty-form" method="post" action="@actionUrl" onsubmit="return appModal.submit(this)">
+    @Html.AntiForgeryToken()
+
+    @* <input type="hidden" name="id" value="@Model.Entry?.Id" /> *@
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+
+    @await Html.PartialAsync("DTO/_AccountCategoryCRUD", Model)
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalFooter", Model)
+</form>

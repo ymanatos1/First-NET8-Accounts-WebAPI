@@ -1,0 +1,484 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApp.MVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebApp.MVC.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebApp.MVC</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - WebApp.MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="appToast" class="toast align-items-center border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i id="appToastIcon" class="bi"></i>
+                    <span id="appToastMessage"></span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    @* Shared modal shell used by all popups *@
+    <div class="modal fade" id="appModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" id="appModalContent">
+                @* Content will be injected here by JS *@
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen Blocker / Progress Overlay -->
+    @* <div id="screenBlocker" class="screen-blocker d-none">
+        <div class="screen-blocker-content">
+            <div class="spinner-border text-light" role="status"></div>
+            <div class="mt-3 fw-bold text-light">Processing… Please wait</div>
+        </div>
+    </div> *@
+    <div id="screenBlocker" class="screen-blocker d-none">
+        <div class="screen-blocker-content">
+            <div class="spinner-border text-light" role="status"></div>
+            <div id="screenBlockerMessage" class="mt-3 fw-bold text-light">Processing…</div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="dirtyConfirmModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Unsaved Changes</h5>
+                    <span id="dirtyBadgeModal"
+                          class="badge bg-danger ms-2 d-none">
+                        Unsaved (0)
+                    </span>
+                </div>
+                <div class="modal-body">
+                    You have unsaved changes. Are you sure you want to leave?
+                </div>
+                <div class="modal-footer">
+                    @* <button type="button" class="btn btn-secondary" id="dirtyCancel">Stay</button>
+                    <button type="button" class="btn btn-danger" id="dirtyContinue">Leave</button> *@                    
+                    <button type="button" class="btn btn-secondary" id="dirtyCancel" data-bs-dismiss="modal">Stay</button>
+                    <button type="button" class="btn btn-danger" id="dirtyContinue">Leave</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> *@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @* <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false) *@
+
+    <script src="~/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
+
+    @if (TempData["Toast"] is string toastJson)
+    {
+        <script>
+            //document.addEventListener("DOMContentLoaded", function () {
+                //JSON.parse(@Html.Raw(Json.Serialize(toastJson)));
+
+                const toast = JSON.parse(@Html.Raw(Json.Serialize(toastJson)));
+                showToast(toast.message, toast.toastType, toast.icon);
+            //});
+        </script>
+    }
+
+
+    @* <script>
+        (function () {
+            let isDirty = false;
+
+            document.addEventListener('input', function (e) {
+                if (e.target.closest('form.dirty-form')) {
+                    isDirty = true;
+                }
+            });
+
+            document.addEventListener('submit', function (e) {
+                if (e.target.closest('form.dirty-form')) {
+                    isDirty = false;
+                }
+            });
+
+            window.addEventListener('beforeunload', function (e) {
+                if (!isDirty) return;
+                e.preventDefault();
+                e.returnValue = '';
+            });
+
+            document.addEventListener('hide.bs.modal', function (e) {
+                if (window.isDirty) {
+                    if (!confirm("You have unsaved changes. Close anyway?")) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        })();
+    </script> *@
+
+    @* <script>
+        (function () {
+
+            window.isDirty = false;
+            let pendingNavigation = null;
+
+            function isValidDirtyInput(el) {
+                return el.closest("form.dirty-form") &&
+                    el.type !== "hidden" &&
+                    !el.readOnly;
+            }
+
+            // Track per-field changes
+            document.addEventListener("input", function (e) {
+                if (!isValidDirtyInput(e.target)) return;
+
+                window.isDirty = true;
+                e.target.classList.add("dirty-field");
+            });
+
+            // Prevent browser close
+            window.addEventListener("beforeunload", function (e) {
+                if (!window.isDirty) return;
+                e.preventDefault();
+                e.returnValue = "";
+            });
+
+            // Clear dirty on SUBMIT
+            document.addEventListener("submit", function (e) {
+                if (!e.target.matches("form.dirty-form")) return;
+                window.isDirty = false;
+            });
+
+            // Bootstrap modal close protection
+            document.addEventListener("hide.bs.modal", function (e) {
+                if (!window.isDirty) return;
+
+                e.preventDefault();
+                pendingNavigation = () => bootstrap.Modal.getInstance(e.target).hide();
+
+                new bootstrap.Modal(document.getElementById("dirtyConfirmModal"))
+                    .show();
+            });
+
+            // Intercept LINKS
+            document.addEventListener("click", function (e) {
+                const link = e.target.closest("a");
+                if (!link || !window.isDirty) return;
+
+                e.preventDefault();
+                pendingNavigation = () => window.location = link.href;
+
+                new bootstrap.Modal(document.getElementById("dirtyConfirmModal"))
+                    .show();
+            });
+
+            // Confirm Leave
+            document.getElementById("dirtyContinue")?.addEventListener("click", function () {
+                window.isDirty = false;
+                bootstrap.Modal.getInstance(
+                    document.getElementById("dirtyConfirmModal")
+                ).hide();
+
+                if (pendingNavigation) pendingNavigation();
+            });
+
+            // Cancel Leave
+            document.getElementById("dirtyCancel")?.addEventListener("click", function () {
+                pendingNavigation = null;
+                bootstrap.Modal.getInstance(
+                    document.getElementById("dirtyConfirmModal")
+                ).hide();
+            });
+
+            // RESET dirty state manually
+            document.addEventListener("click", function (e) {
+                if (!e.target.classList.contains("dirty-reset")) return;
+
+                window.isDirty = false;
+                let form = e.target.closest("form.dirty-form");
+                form?.querySelectorAll(".dirty-field").forEach(x => x.classList.remove("dirty-field"));
+            });
+
+        })();
+    </script> *@
+
+    <script>
+        (function () {
+
+            const badge = document.getElementById("dirtyBadge");
+            const modalBadge = document.getElementById("dirtyBadgeModal");
+
+            function updateBadge(form) {
+                const count = form.querySelectorAll(".dirty-field").length;
+
+                [badge, modalBadge].forEach(b => {
+                    //if (!b) return;
+                    if (b) {
+                        b.textContent = `Unsaved (${count})`;
+                        if (count > 0) {
+                            //b.textContent = `Unsaved (${count})`;
+                            b.classList.remove("d-none");
+                        } else {
+                            b.classList.add("d-none");
+                        }
+                    }
+                });
+            }
+
+
+            window.isDirty = false;
+            let pendingNavigation = null;
+            let confirmOpen = false;
+
+            /*function showReset(form) {
+                const btn = form?.querySelector(".dirty-reset");
+                if (btn) btn.classList.remove("d-none");
+            }
+            function hideReset(form) {
+                const btn = form?.querySelector(".dirty-reset");
+                if (btn) btn.classList.add("d-none");
+            }*/
+            function showReset(form) {
+                const btn = form?.querySelector(".dirty-reset");
+                if (!btn) return;
+
+                if (btn.classList.contains("d-none")) {
+                    btn.classList.remove("d-none");
+
+                    // trigger appear animation
+                    btn.classList.add("dirty-reset-appear");
+                    btn.addEventListener("animationend", () => {
+                        btn.classList.remove("dirty-reset-appear");
+                    }, { once: true });
+                }
+            }
+            function hideReset(form) {
+                const btn = form?.querySelector(".dirty-reset");
+                if (!btn) return;
+
+                btn.classList.add("d-none");
+            }
+
+            document.querySelectorAll("form.dirty-form").forEach(f => hideReset(f));
+
+
+            function isValidDirtyInput(el) {
+                return el.closest("form.dirty-form") &&
+                    el.type !== "hidden" &&
+                    !el.readOnly;
+            }
+
+            // // Track per-field changes
+            // document.addEventListener("input", function (e) {
+            //     if (!isValidDirtyInput(e.target)) return;
+
+            //     const form = e.target.closest("form.dirty-form");
+
+            //     window.isDirty = true;
+            //     e.target.classList.add("dirty-field");
+
+            //     updateBadge(form);
+            // });
+            document.addEventListener("input", function (e) {
+                if (!isValidDirtyInput(e.target)) return;
+
+                const form = e.target.closest("form.dirty-form");
+
+                window.isDirty = true;
+                e.target.classList.add("dirty-field");
+
+                showReset(form);        // ✅ SHOW RESET
+                updateBadge(form);
+            });
+
+
+            // Prevent browser close
+            window.addEventListener("beforeunload", function (e) {
+                if (!window.isDirty) return;
+                e.preventDefault();
+                e.returnValue = "";
+            });
+
+            // // ✅ AUTO-RESET on NORMAL successful POST
+            // document.addEventListener("submit", function (e) {
+            //     if (!e.target.matches("form.dirty-form")) return;
+
+            //     window.isDirty = false;
+
+            //     const form = e.target;
+            //     form.querySelectorAll(".dirty-field")
+            //         .forEach(x => x.classList.remove("dirty-field"));
+
+            //     updateBadge(form);
+            // });
+            document.addEventListener("submit", function (e) {
+                if (!e.target.matches("form.dirty-form")) return;
+
+                const form = e.target;
+
+                window.isDirty = false;
+
+                form.querySelectorAll(".dirty-field")
+                    .forEach(x => x.classList.remove("dirty-field"));
+
+                hideReset(form);        // ✅ HIDE RESET
+                updateBadge(form);
+            });
+
+
+            // Bootstrap modal close protection
+            document.addEventListener("hide.bs.modal", function (e) {
+                if (!window.isDirty || confirmOpen) return;
+
+                //confirmOpen = true;
+                if (!confirmOpen) {
+                    confirmOpen = true;
+
+                    new bootstrap.Modal(
+                        document.getElementById("dirtyConfirmModal")
+                    ).show();
+                }
+
+                e.preventDefault();
+
+                pendingNavigation = () =>
+                    bootstrap.Modal.getInstance(e.target).hide();
+
+                new bootstrap.Modal(
+                    document.getElementById("dirtyConfirmModal")
+                ).show();
+            });
+
+            // // Intercept LINKS
+            document.addEventListener("click", function (e) {
+                if (!e.target.classList.contains("dirty-reset")) return;
+
+                const btn = e.target;
+                const form = btn.closest("form.dirty-form");
+                if (!form) return;
+
+                // click pulse animation
+                btn.classList.add("dirty-reset-click");
+                btn.addEventListener("animationend", () => {
+                    btn.classList.remove("dirty-reset-click");
+                }, { once: true });
+
+                window.isDirty = false;
+
+                form.querySelectorAll(".dirty-field")
+                    .forEach(x => x.classList.remove("dirty-field"));
+
+                hideReset(form);
+                updateBadge(form);
+            });
+
+
+            // Confirm Leave
+            document.getElementById("dirtyContinue")?.addEventListener("click", function () {
+                window.isDirty = false;
+                confirmOpen = false;
+
+                document.querySelectorAll(".dirty-field")
+                    .forEach(x => x.classList.remove("dirty-field"));
+
+                document.querySelectorAll("form.dirty-form")
+                    .forEach(f => hideReset(f));
+
+                //if (badge) badge.classList.add("d-none");
+                [badge, modalBadge].forEach(b => b?.classList.add("d-none"));
+
+                const modalEl = document.getElementById("dirtyConfirmModal");
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+
+                // 🔥 HARD BACKDROP CLEANUP (prevents dark stacking)
+                document.querySelectorAll(".modal-backdrop").forEach(b => b.remove());
+                document.body.classList.remove("modal-open");
+
+                if (pendingNavigation) pendingNavigation();
+                pendingNavigation = null;
+            });
+            // Cancel Leave
+            document.getElementById("dirtyCancel")?.addEventListener("click", function () {
+                confirmOpen = false;
+                pendingNavigation = null;
+
+                const modalEl = document.getElementById("dirtyConfirmModal");
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+
+                // 🔥 HARD BACKDROP CLEANUP
+                document.querySelectorAll(".modal-backdrop").forEach(b => b.remove());
+                document.body.classList.remove("modal-open");
+            });
+
+
+            // RESET dirty state manually
+            document.addEventListener("click", function (e) {
+                if (!e.target.classList.contains("dirty-reset")) return;
+
+                const form = e.target.closest("form.dirty-form");
+                if (!form) return;
+
+                window.isDirty = false;
+                form.querySelectorAll(".dirty-field")
+                    .forEach(x => x.classList.remove("dirty-field"));
+
+                updateBadge(form);
+            });
+
+        })();
+    </script>
+
+
+
+
+</body>
+</html>

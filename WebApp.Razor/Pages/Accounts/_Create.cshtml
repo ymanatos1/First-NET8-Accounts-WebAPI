@@ -1,0 +1,75 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountVM
+@{
+    Layout = null;
+}
+
+<form method="post" asp-page="./Create" onsubmit="return appModal.submit(this)">
+    @Html.AntiForgeryToken()
+
+    @* <div class="modal-header">
+        <h5 class="modal-title">Create New Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div> *@
+    @* <div class="modal-header p-0 border-0">
+        <!-- Auto-themed header -->
+        <div class="popup-header @Model.Theme flex-grow-1">
+            <i class="bi @Model.Icon"></i>
+            <span>@Model.Title</span>
+        </div>
+        <!-- Close button -->
+        @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "modal")
+    </div>
+
+    <!-- Alert placeholder WITHOUT modal-close attribute -->
+    <div id="popupAlertPlaceholder">
+        @if (Model?.Error != null && Model.Error is string editError)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @editError
+                @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "alert")
+            </div>
+        }
+    </div> *@
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+
+    <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label" asp-for="Entry.Name"></label>
+            <input asp-for=" Entry.Name" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" asp-for="Entry.Description"></label>
+            <input asp-for="Entry.Description" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            @* <label class="form-label">IsActive</label> *@
+            <div class="form-check form-switch">
+                <input asp-for="Entry.IsActive" class="form-check-input" type="checkbox" />
+                <label class="form-check-label" asp-for="Entry.IsActive"></label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" asp-for="Entry.CategoryId"></label>
+            @* <input asp-for="Account.CategoryId" class="form-control" /> *@
+            <select asp-for="Entry.CategoryId"
+                    asp-items="@(new SelectList(Model!.CategoryList, "Id", "Name"))"
+                    class="form-select">
+                <option value="">-- Select Category --</option>
+            </select>
+            <span asp-validation-for="Entry.CategoryId" class="text-danger"></span>
+        </div>
+    </div>
+
+    @* <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Create</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div> *@
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalFooter", Model)
+</form>

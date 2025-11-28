@@ -1,0 +1,20 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountVM
+
+@{
+    Layout = null;
+
+    var actionUrl = $"/{Model.Path}/{Model.PAGE_NAME}Quick";
+}
+
+<form class="dirty-form" method="post" action="@actionUrl" onsubmit="return appModal.submit(this)">
+    @Html.AntiForgeryToken()
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+
+    @await Html.PartialAsync("DTO/_AccountCRUD", Model)
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalFooter", Model)
+
+</form>

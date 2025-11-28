@@ -1,0 +1,91 @@
+﻿@using WebApp.Lib.Data.ViewModels
+@using WebApp.Lib.Data.ViewModels.Base
+
+@model AccountVM
+
+@{
+}
+
+<div class="modal-body">
+
+    @if (Model.CRUD_TYPE == VMBase.CRUD.DELETE)
+    {
+        @if (Model.Entry == null)
+        {
+            <div class="alert alert-danger">@Model.DtoName not found.</div>
+        }
+        else
+        {
+            <input type="hidden" asp-for="Entry.Id" />
+
+            <p>Are you sure you want to delete:</p>
+            <h5>@Model.Entry?.AsString()</h5>
+        }
+    }
+
+    else if (Model.CRUD_TYPE == VMBase.CRUD.READ)
+    {
+        @if (Model.Entry == null)
+        {
+            <div class="alert alert-danger">@Model.DtoName not found.</div>
+        }
+        else
+        {
+            <dl class="row">
+                <dt class="col-sm-3">Id</dt>
+                <dd class="col-sm-9">@Model.Entry.Id</dd>
+
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9">@Model.Entry.Name</dd>
+
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@Model.Entry.Description</dd>
+
+                <dt class="col-sm-3">IsActive</dt>
+                <dd class="col-sm-9">@Model.Entry.IsActive</dd>
+
+                <dt class="col-sm-3">Category</dt>
+                <dd class="col-sm-9">@Model.Entry.Category</dd>
+            </dl>
+        }
+    }
+
+    else if (Model.CRUD_TYPE == VMBase.CRUD.CREATE || Model.CRUD_TYPE == VMBase.CRUD.UPDATE)
+    {
+        <input type="hidden" asp-for="Entry.Id" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+        <div class="mb-3">
+            <label class="form-label" asp-for="Entry.Name"></label>
+            <input asp-for="Entry.Name" class="form-control" />
+            <span asp-validation-for="Entry.Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" asp-for="Entry.Description"></label>
+            <input asp-for="Entry.Description" class="form-control" />
+            <span asp-validation-for="Entry.Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            @* <label class="form-label">IsActive</label> *@
+            <div class="form-check form-switch">
+                <input asp-for="Entry.IsActive" class="form-check-input" type="checkbox" />
+                <label class="form-check-label" asp-for="Entry.IsActive"></label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" asp-for="Entry.CategoryId"></label>
+            @* <input asp-for="Account.CategoryId" class="form-control" /> *@
+            <select asp-for="Entry.CategoryId"
+                    asp-items="@(new SelectList(Model.CategoryList, "Id", "Name"))"
+                    class="form-select">
+                <option value="">-- Select Category --</option>
+            </select>
+            <span asp-validation-for="Entry.CategoryId" class="text-danger"></span>
+        </div>
+    }
+
+</div>

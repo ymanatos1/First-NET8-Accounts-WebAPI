@@ -1,0 +1,41 @@
+﻿@using WebAPI.Data.Models
+@using WebApp.MVC.Controllers
+
+@model IEnumerable<Account>
+
+
+@{
+}
+
+@* <div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+ *@
+
+<div>
+
+    <button class="btn btn-primary mb-3"
+            onclick="window.location.href='/accounts'">
+        <i class="bi bi-person"></i> Go to Accounts Full Management
+    </button>
+    <br />
+
+    <button class="btn btn-primary mb-3"
+            onclick="window.location.href='/AccountCategories'">
+        <i class="bi bi-person"></i> Go to Account Categories Full Management
+    </button>
+    <br />
+
+
+
+    @* @await Html.PartialAsync("DTO/_ResponsiveAccountsTable", Model) *@
+
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript" src="~/js/site.js">
+    </script>
+
+}

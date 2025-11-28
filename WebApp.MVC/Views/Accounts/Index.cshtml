@@ -1,0 +1,29 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountsVM
+
+@{
+}
+
+@* <h2 class="mb-3">Accounts</h2> *@
+<h2 class="mb-3">@Model.DtoNamePlural</h2>
+<br />
+
+
+@await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+<br />
+
+@* <button class="btn btn-success mb-3"
+        onclick="appModal.load('/@Model.Path/CreateQuick')">
+    <i class="bi bi-plus-circle"></i> New @Model.DtoName
+</button *@
+@await Html.PartialAsync("DTO/UI/_ResponsiveTableNewEntryButton", Model)
+<br />
+
+<div id="accountsTable">
+    @* your table *@
+    @await Html.PartialAsync($"DTO/_Responsive{Model.Path}Table", Model)
+</div>
+
+@* @await Html.PartialAsync("UI/_ScreenBlocker")
+@await Html.PartialAsync("UI/_Toast") *@

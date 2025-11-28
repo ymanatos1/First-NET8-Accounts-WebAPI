@@ -1,0 +1,19 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountCategoryVM
+
+@{
+    var actionUrl = $"/{Model.Path}/{Model.PAGE_NAME}";
+}
+
+<!-- FULL PAGE MODE (NORMAL SUBMIT) -->
+<form class="dirty-form" method="post" action="@actionUrl">
+    @Html.AntiForgeryToken()
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+    <br />
+
+    @await Html.PartialAsync("DTO/_AccountCategoryCRUD", Model)
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalFooter", Model)
+</form>

@@ -1,0 +1,52 @@
+﻿@page
+
+@using WebApp.Razor.Pages.AccountCategories
+
+@model AccountCategoriesModel
+@{
+    //ViewData["Title"] = "Accounts";
+}
+
+<h2 class="mb-3">Account Categories</h2>
+
+<button class="btn btn-success mb-3"
+        onclick="appModal.load('/AccountCategories/Create')">
+    <i class="bi bi-plus-circle"></i> New Account Category
+</button>
+
+<br />
+
+<div id="accountsTable">
+    @* your table *@
+    @await Html.PartialAsync("DTO/_ResponsiveAccountCategoriesTable", Model.ModelVM)
+</div>
+
+
+@* @await Html.PartialAsync("UI/_ScreenBlocker")
+@await Html.PartialAsync("UI/_Toast") *@
+
+
+<!-- Bootstrap Modal -->
+@* <div class="modal fade" id="actionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" id="modalContent">
+            <!-- Dynamic content will load here -->
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("DTO/UI/MODAL/_ModalContainer") *@
+
+@section Scripts {
+    <script>
+        // Loads any Razor Page into the modal using AJAX
+        // function openModal(url) {
+        //     fetch(url)
+        //         .then(res => res.text())
+        //         .then(html => {
+        //             document.getElementById("modalContent").innerHTML = html;
+        //             let modal = new bootstrap.Modal(document.getElementById("actionModal"));
+        //             modal.show();
+        //         });
+        // }
+    </script>
+}

@@ -1,0 +1,45 @@
+﻿<!-- This is the ID of the item -->
+@model (int Id, string Path)
+
+@{
+}
+
+<!-- Details -->
+@* <a asp-page="./Details"
+   asp-route-id="@Model"
+   class="btn btn-sm btn-outline-primary me-1"
+   title="Details">
+    <i class="bi bi-info-circle"></i>
+</a>
+ *@
+<button class="btn btn-sm btn-outline-primary me-1"
+        type="button" title="Details"
+        onclick="appModal.load('/@Model.Path/DetailsQuick?id=@Model.Id')">
+    <i class="bi bi-info-circle"></i>
+</button>
+
+<!-- Edit -->
+@* <a asp-page="./Edit"
+   asp-route-id="@Model"
+   class="btn btn-sm btn-outline-secondary me-1"
+   title="Edit">
+    <i class="bi bi-pencil-square"></i>
+</a> *@
+<button class="btn btn-sm btn-outline-secondary me-1"
+        type="button" title="Edit"
+        onclick="appModal.load('/@Model.Path/EditQuick?id=@Model.Id')">
+    <i class="bi bi-pencil-square"></i>
+</button>
+
+<!-- Delete -->
+@* <a asp-page="./Delete"
+   asp-route-id="@Model"
+   class="btn btn-sm btn-outline-danger"
+   title="Delete">
+    <i class="bi bi-trash"></i>
+</a> *@
+<button class="btn btn-sm btn-outline-danger"
+        type="button" title="Delete"
+        onclick="appModal.load('/@Model.Path/DeleteQuick?id=@Model.Id')">
+    <i class="bi bi-trash"></i>
+</button>

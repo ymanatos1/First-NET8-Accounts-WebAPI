@@ -1,0 +1,360 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+
+
+.bold-col-1 td:nth-child(1),
+.bold-col-1 th:nth-child(1) {
+    font-weight: bold;
+}
+
+.bold-col-2 td:nth-child(2),
+.bold-col-2 th:nth-child(2) {
+    font-weight: bold;
+}
+
+.bold-col-3 td:nth-child(3),
+.bold-col-3 th:nth-child(3) {
+    font-weight: bold;
+}
+
+.bold-col-4 td:nth-child(4),
+.bold-col-4 th:nth-child(4) {
+    font-weight: bold;
+}
+
+
+
+/* Base popup header style */
+.popup-header {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: #fff;
+    padding: .75rem 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    border-top-left-radius: .3rem;
+    border-top-right-radius: .3rem;
+}
+
+/* Popup themes matching toast colors */
+.popup-success {
+    background-color: #198754;
+}
+/* green */
+.popup-info {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.popup-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.popup-danger {
+    background-color: #dc3545;
+}
+
+/* Popup icon size */
+.popup-header i {
+    font-size: 1.3rem;
+}
+
+
+/* Hand cursor for all interactive controls INSIDE popup */
+#appModalContent button,
+#appModalContent .btn,
+#appModalContent select,
+#appModalContent option,
+#appModalContent input[type="checkbox"],
+#appModalContent input[type="radio"],
+#appModalContent .form-check-input,
+#appModalContent label,
+#appModalContent .form-check-label,
+#appModalContent i {
+    cursor: pointer !important;
+}
+
+    /*Hover Glow Effect for Buttons*/
+    #appModalContent button.btn:hover {
+        filter: brightness(1.1);
+        box-shadow: 0 0 6px rgba(0,0,0,0.25);
+        transition: all 0.15s ease-in-out;
+    }
+
+    /*Click “Press Down” Animation*/
+    #appModalContent button.btn:active {
+        transform: scale(0.96);
+        transition: transform 0.05s ease-out;
+    }
+
+    /*Dropdown Hover Highlight*/
+    #appModalContent select.form-select:hover {
+        border-color: #0d6efd;
+        box-shadow: 0 0 6px rgba(13,110,253,.25);
+        transition: all 0.15s ease-in-out;
+    }
+
+    /*Checkbox / Switch Hover Highlight*/
+    #appModalContent .form-check-input:hover {
+        box-shadow: 0 0 6px rgba(13,110,253,.35);
+    }
+
+    /*Smooth Input Focus Highlight*/
+    #appModalContent input.form-control:focus,
+    #appModalContent textarea.form-control:focus,
+    #appModalContent select.form-select:focus {
+        box-shadow: 0 0 0.25rem rgba(13,110,253,.35);
+        border-color: #0d6efd;
+        transition: box-shadow 0.15s ease-out;
+    }
+
+
+    /*Icon Hover Effect*/
+    #appModalContent i:hover {
+        color: #0d6efd;
+        transition: color 0.2s ease;
+    }
+
+
+/*Form Area Fade-In Effect (Optional)*/
+#appModalContent {
+    animation: popupFadeIn 0.25s ease-out;
+}
+
+@keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.popup-invalid-highlight {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220,53,69,.25);
+    animation: popup-shake 0.2s ease-in-out 2;
+}
+
+@keyframes popup-shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-4px);
+    }
+
+    50% {
+        transform: translateX(4px);
+    }
+
+    75% {
+        transform: translateX(-4px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.popup-field-updated {
+    animation: popup-updated 1.5s ease-out forwards;
+}
+
+@keyframes popup-updated {
+    0% {
+        background-color: #d1e7dd;
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+
+/*.screen-blocker {
+    position: fixed;
+    inset: 0;
+    /*background: rgba(0,0,0,0.5);*/
+/*    background: rgba(255, 255, 255, 0.65); /* MUCH lighter */
+/*    z-index: 5000; /* higher than modals and toasts */
+/*   display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen-blocker-content {
+    text-align: center;
+    animation: fadein 0.3s ease-out;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}*/
+
+.screen-blocker {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.25); /* light + transparent */
+    backdrop-filter: blur(6px); /* the frosted glass effect! */
+    -webkit-backdrop-filter: blur(6px); /* Safari support */
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* start invisible */
+    animation: blockerFadeIn 0.3s ease-out forwards;
+}
+
+/* Central spinner container */
+.screen-blocker-content {
+    text-align: center;
+    animation: popupFadeUp 0.4s ease-out forwards;
+}
+
+/* Smooth fade/blur animation */
+@keyframes blockerFadeIn {
+    0% {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+
+    100% {
+        opacity: 1;
+        backdrop-filter: blur(6px);
+    }
+}
+
+/* Subtle content rise + fade-in */
+@keyframes popupFadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+.toast-container {
+    z-index: 6000 !important; /* above screen blocker */
+}
+
+.toast-success {
+    background-color: #198754 !important; /* Bootstrap success */
+    color: #fff;
+}
+
+.toast-warning {
+    background-color: #ffc107 !important; /* Bootstrap warning */
+}
+
+.toast-info {
+    background-color: #0dcaf0 !important; /* Bootstrap info */
+    color: #000;
+}
+
+.toast-danger {
+    background-color: #dc3545 !important; /* Bootstrap danger */
+    color: #fff;
+}
+
+
+
+
+.dirty-field {
+    border-color: #dc3545 !important;
+    background-color: #fff4f4;
+}
+
+#dirtyBadge {
+    font-size: 0.75rem;
+}
+
+/*.modal-footer {
+    justify-content: space-between !important;
+}*/
+.main-footer {
+    justify-content: flex-end; /* normal bootstrap */
+}
+
+.dirty-reset {
+    transition: opacity 0.2s ease;
+}
+
+/* Appear animation */
+@keyframes dirtyResetAppear {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.dirty-reset-appear {
+    animation: dirtyResetAppear 0.2s ease-out;
+}
+
+/* Click pulse animation */
+@keyframes dirtyResetClick {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.dirty-reset-click {
+    animation: dirtyResetClick 0.15s ease-out;
+}
+
+

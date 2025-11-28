@@ -1,0 +1,51 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountCategoryVM
+@{
+    Layout = null;
+}
+
+<form method="post" asp-page="./Delete" onsubmit="return appModal.submit(this)">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" value="@Model.Entry?.Id" />
+
+    @* <div class="modal-header">
+        <h5 class="modal-title">Delete Account @(Model.AccountCategory?.AsString() ?? "NULL")</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div> *@
+    @* <div class="modal-header p-0 border-0">
+        <!-- Auto-themed header -->
+        <div class="popup-header @Model.Theme flex-grow-1">
+            <i class="bi @Model.Icon"></i>
+            <span>@Model.Title</span>
+        </div>
+        <!-- Close button -->
+        @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "modal")
+    </div>
+
+    <!-- Alert placeholder WITHOUT modal-close attribute -->
+    <div id="popupAlertPlaceholder">
+        @if (Model.Error is string editError)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @editError
+                @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "alert")
+            </div>
+        }
+    </div> *@
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+
+    <div class="modal-body">
+        <p>Are you sure you want to delete:</p>
+        <h5>@(Model.Entry?.AsString() ?? "NULL")</h5>
+    </div>
+
+    @* <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div> *@
+
+    @await Html.PartialAsync("DTO/UI/MODAL/_ModalFooter", Model)
+</form>

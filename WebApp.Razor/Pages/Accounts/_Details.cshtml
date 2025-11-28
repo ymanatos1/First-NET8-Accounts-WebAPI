@@ -1,0 +1,65 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountVM
+@{
+    Layout = null;
+}
+
+@* <div class="modal-header">
+    <h5 class="modal-title">Account Details @(Model.Account?.AsString() ?? "NULL")</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div> *@
+@* <div class="modal-header p-0 border-0">
+    <!-- Auto-themed header -->
+    <div class="popup-header @Model.Theme flex-grow-1">
+        <i class="bi @Model.Icon"></i>
+        <span>@Model.Title</span>
+    </div>
+    <!-- Close button -->
+    @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "modal")
+</div>
+
+<!-- Alert placeholder WITH modal-close attribute -->
+<div id="popupAlertPlaceholder" data-close-modal-on-alert="true">
+    @if (Model.Error is string detailsError)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @detailsError
+            @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "alert")
+        </div>
+    }
+</div> *@
+
+@await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+
+<div class="modal-body">
+    @if (@Model.Entry == null)
+    {
+        <h2>Not found!</h2>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Id</dt>
+            <dd class="col-sm-9">@Model.Entry.Id</dd>
+
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Entry.Name</dd>
+
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">@Model.Entry.Description</dd>
+
+            <dt class="col-sm-3">IsActive</dt>
+            <dd class="col-sm-9">@Model.Entry.IsActive</dd>
+
+            <dt class="col-sm-3">Category</dt>
+            <dd class="col-sm-9">@Model.Entry.Category</dd>
+        </dl>
+    }
+</div>
+
+@* <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div> *@
+
+@await Html.PartialAsync("DTO/UI/MODAL/_ModalFooter", Model)

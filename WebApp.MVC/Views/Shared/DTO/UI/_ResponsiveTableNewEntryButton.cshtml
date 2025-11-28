@@ -1,0 +1,12 @@
+﻿@using WebApp.Lib.Data.ViewModels
+@using WebApp.Lib.Data.ViewModels.Base
+
+@model VMBase   // i.e. AccountsVM, AccountCategoriesVM
+
+@{
+}
+
+<button class="btn btn-success mb-3"
+        onclick="appModal.load('/@Model.Path/CreateQuick')">
+    <i class="bi bi-plus-circle"></i> New @Model.DtoName
+</button>

@@ -1,0 +1,13 @@
+﻿@using WebApp.Lib.Data.ViewModels
+
+@model AccountVM
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync("DTO/UI/MODAL/_ModalHeader", Model)
+
+@await Html.PartialAsync("DTO/_AccountCRUD", Model)
+
+@await Html.PartialAsync("DTO/UI/MODAL/_ModalFooter", Model)

@@ -1,0 +1,42 @@
+﻿@using WebApp.Lib.Data.ViewModels
+@using WebApp.Lib.Data.ViewModels.Base
+
+@model VMBase   // i.e. AccountVM, AccountCategoryVM
+
+@{
+}
+
+@* <div class="modal-header">
+        <h5 class="modal-title">Edit Account @(Model.Account?.AsString() ?? "NULL")</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div> *@
+<div class="modal-header p-0 border-0">
+    <!-- Auto-themed header -->
+    <div class="popup-header @Model.Theme flex-grow-1">
+        <i class="bi @Model.Icon"></i>
+        <span>@Model.Title</span>
+    </div>
+
+    @if (Model.IsModal)
+    {
+        <!-- Close button -->
+        @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "modal")
+    }
+</div>
+
+<!-- Alert placeholder WITHOUT modal-close attribute -->
+<div id="popupAlertPlaceholder">
+    @if (Model.Error is string editError)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @editError
+            @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "alert")
+        </div>
+    }
+</div>
+
+
+
+<span id="dirtyBadge" class="badge bg-danger ms-2">
+    Unsaved (0)
+</span>

@@ -1,0 +1,32 @@
+﻿@using WebAPI.Data.Models
+@using WebApp.Lib.Data.ViewModels
+
+@model AccountCategoriesVM
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover align-middle table bold-col-2">
+        <thead class="table-light">
+            <tr>
+                <th>@Html.DisplayNameFor(m => m.Entries.First().Id)</th>
+                <th>@Html.DisplayNameFor(m => m.Entries.First().Name)</th>
+                <th>@Html.DisplayNameFor(m => m.Entries.First().Description)</th>
+
+                <th class="text-end" style="width: 140px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Entries)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+
+                    <td class="text-end">
+                        @await Html.PartialAsync("DTO/UI/_ResponsiveTableActionButtons", (Id: item.Id, Path: Model.Path))
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
