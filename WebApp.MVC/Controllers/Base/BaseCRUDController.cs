@@ -59,7 +59,8 @@ public abstract class BaseCRUDController<Tdto, Tvm, TdtoQp, Tsrvc> : Controller
                     : View(model);  // full page
             }
 
-            return RedirectToAction("Index");
+            //return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index), "Accounts");
         }
     }
 
@@ -131,7 +132,8 @@ public abstract class BaseCRUDController<Tdto, Tvm, TdtoQp, Tsrvc> : Controller
             }
             return error != null
                 ? View(model.PAGE_NAME, model)
-                : RedirectToAction("Index");
+                //: RedirectToAction("Index");
+                : RedirectToAction(nameof(Index), Path);
         }
     }
 

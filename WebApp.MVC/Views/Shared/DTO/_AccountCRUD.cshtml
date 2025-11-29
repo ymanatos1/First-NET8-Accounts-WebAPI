@@ -62,9 +62,15 @@
             <span asp-validation-for="Entry.Name" class="text-danger"></span>
         </div>
 
-        <div class="mb-3">
+        @* <div class="mb-3">
             <label class="form-label" asp-for="Entry.Description"></label>
             <input asp-for="Entry.Description" class="form-control" />
+            <span asp-validation-for="Entry.Description" class="text-danger"></span>
+        </div> *@
+        <div class="mb-3">
+            <label class="form-label" asp-for="Entry.Description"></label>
+            <textarea asp-for="Entry.Description" class="form-control" data-char-counter></textarea>
+            <div class="form-text text-end char-counter"></div>
             <span asp-validation-for="Entry.Description" class="text-danger"></span>
         </div>
 

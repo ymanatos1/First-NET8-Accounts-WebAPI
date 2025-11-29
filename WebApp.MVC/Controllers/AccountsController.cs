@@ -48,12 +48,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> CreateQuick()
     {
-        /*var model = await BuildVMAsync(VMBase.CRUD.CREATE);
-
-        return PartialView(model.PARTIAL_NAME, model);
-
-        return CreateGetQuickBase(await BuildVMAsync(VMBase.CRUD.CREATE));*/
-
         return await ServeGetAsync(BuildVMAsync, true, VMBase.CRUD.CREATE);
     }
 
@@ -61,17 +55,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateQuick(AccountVM model)
     {
-        /*model.UpdateBase(VMBase.CRUD.CREATE, _services.AccountsService, true, Path);
-
-        if (model.Entry == null || !ModelState.IsValid)
-            return await showPopupErrorAsync(model, $"{_services.AccountsService.DtoName} IS NULL OR ModelState invalid!");
-
-        var createdEntry = await _services.AccountsService.AddAsync(model.Entry);
-        if ((createdEntry?.Id ?? 0) <= 0)
-            return await showPopupErrorAsync(model, $"New {_services.AccountsService.DtoName} not added due to error!");
-
-        return await showPopupErrorAsync(model);*/
-
         return await ServeOperationAsync(model, LoadDropdownsAsync, true, VMBase.CRUD.CREATE);
     }
 
@@ -79,12 +62,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> Create()
     {
-        /*var model = await BuildVMAsync(VMBase.CRUD.CREATE);
-
-        return View(model); // full page
-
-        return CreateGetBase(await BuildVMAsync(VMBase.CRUD.CREATE));*/
-        
         return await ServeGetAsync(BuildVMAsync, false, VMBase.CRUD.CREATE);
     }
 
@@ -103,17 +80,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> DetailsQuick(int id)
     {
-        /*var entry = await _services.AccountsService.GetByIdAsync(id);
-
-        if (entry != null)
-        {
-            var model = await BuildVMAsync(VMBase.CRUD.READ, entry);
-
-            return PartialView(model.PARTIAL_NAME, model);
-        }
-
-        return RedirectToAction("Index");*/
-
         return await ServeGetAsync(BuildVMAsync, true, VMBase.CRUD.READ, id);
     }
 
@@ -121,17 +87,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
-        /*var entry = await _services.AccountsService.GetByIdAsync(id);
-
-        if (entry != null)
-        {
-            var model = await BuildVMAsync(VMBase.CRUD.READ, entry);
-
-            return View(model); // full page
-        }
-
-        return RedirectToAction("Index");*/
-
         return await ServeGetAsync(BuildVMAsync, false, VMBase.CRUD.READ, id);
     }
 
@@ -143,17 +98,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> EditQuick(int id)
     {
-        /*var entry = await _services.AccountsService.GetByIdAsync(id);
-
-        if (entry != null)
-        {
-            var model = await BuildVMAsync(VMBase.CRUD.UPDATE, entry);
-
-            return PartialView(model.PARTIAL_NAME, model);
-        }
-
-        return RedirectToAction("Index");*/
-
         return await ServeGetAsync(BuildVMAsync, true, VMBase.CRUD.UPDATE, id);
     }
 
@@ -161,17 +105,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditQuick(AccountVM model)
     {
-        /*model.UpdateBase(VMBase.CRUD.UPDATE, _services.AccountsService, true, Path);
-
-        if (model.Entry == null || !ModelState.IsValid)
-            return await showPopupErrorAsync(model, $"{_services.AccountsService.DtoName} IS NULL OR ModelState invalid!");
-
-        var success = await _services.AccountsService.UpdateAsync(model.Entry.Id, model.Entry);
-        if (!success)
-            return await showPopupErrorAsync(model, $"New {_services.AccountsService.DtoName} not updated due to error!");
-
-        return await showPopupErrorAsync(model);*/
-
         // DO NOT use model.EntryId here, its 0 in just posted model.
         return await ServeOperationAsync(model, LoadDropdownsAsync, true, VMBase.CRUD.UPDATE, model.Entry.Id);
     }
@@ -180,17 +113,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        /*var entry = await _services.AccountsService.GetByIdAsync(id);
-
-        if (entry != null)
-        {
-            var model = await BuildVMAsync(VMBase.CRUD.UPDATE, entry);
-
-            return View(model); // full page
-        }
-
-        return RedirectToAction("Index");*/
-
         return await ServeGetAsync(BuildVMAsync, false, VMBase.CRUD.UPDATE, id);
     }
 
@@ -210,17 +132,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> DeleteQuick(int id)
     {
-        /*var entry = await _services.AccountsService.GetByIdAsync(id);
-
-        if (entry != null)
-        {
-            var model = await BuildVMAsync(VMBase.CRUD.DELETE, entry);
-
-            return PartialView(model.PARTIAL_NAME, model);
-        }
-
-        return RedirectToAction("Index");*/
-
         return await ServeGetAsync(BuildVMAsync, true, VMBase.CRUD.DELETE, id);
     }
 
@@ -228,17 +139,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteQuick(AccountVM model)
     {
-        /*model.UpdateBase(VMBase.CRUD.DELETE, _services.AccountsService, true, Path);
-
-        if (model.Entry == null || model.Entry.Id <= 0)
-            return await showPopupErrorAsync(model, $"{_services.AccountsService.DtoName} IS NULL OR ModelState invalid!");
-
-        var success = await _services.AccountsService.RemoveByIdAsync(model.Entry.Id);
-        if (!success)
-            return await showPopupErrorAsync(model, $"New {_services.AccountsService.DtoName} not deleted due to error!");
-
-        return await showPopupErrorAsync(model);*/
-
         // DO NOT use model.EntryId here, its 0 in just posted model.
         return await ServeOperationAsync(model, LoadDropdownsAsync, true, VMBase.CRUD.DELETE, model.Entry.Id);
     }
@@ -247,17 +147,6 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
     [HttpGet]
     public async Task<IActionResult> Delete(int id)
     {
-        /*var entry = await _services.AccountsService.GetByIdAsync(id);
-
-        if (entry != null)
-        {
-            var model = await BuildVMAsync(VMBase.CRUD.DELETE, entry);
-
-            return View(model); // full page
-        }
-
-        return RedirectToAction("Index");*/
-
         return await ServeGetAsync(BuildVMAsync, false, VMBase.CRUD.DELETE, id);
     }
 
@@ -302,7 +191,8 @@ public class AccountsController : BaseCRUDController<Account, AccountVM, DtoWith
             return error != null
                 //? Partial(PARTIAL_NAME, this)
                 ? View(model.PAGE_NAME, model)
-                : RedirectToAction("Index");
+                //: RedirectToAction("Index");
+                : return RedirectToAction(nameof(Index), "Accounts");
         }
         //: new JsonResult(new
         //  {

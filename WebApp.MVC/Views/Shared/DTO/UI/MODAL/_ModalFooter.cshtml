@@ -41,7 +41,9 @@
 
             @if (showOpBtn)
             {
-                <button type="submit" class="btn @Model.ButtonUIStyle">@Model.ButtonUICaption</button>
+                <button type="submit" class="btn @Model.ButtonUIStyle js-form-submit" disabled">
+                    @Model.ButtonUICaption
+                </button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@cancelBtnCaption</button>
             }
             else
@@ -58,7 +60,9 @@
 
             @if (showOpBtn)
             {
-                <button type="submit" class="btn @Model.ButtonUIStyle">@Model.ButtonUICaption</button>
+                <button type="submit" class="btn @Model.ButtonUIStyle js-form-submit" disabled">
+                    @Model.ButtonUICaption
+                 </button>
             }
             <a class="btn btn-secondary" asp-controller="@Model.Path" asp-action="Index">@cancelBtnCaption</a>
         }

@@ -109,14 +109,13 @@
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    @* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> *@
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-    @* <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false) *@
 
     <script src="~/js/site.js"></script>
     @RenderSection("Scripts", required: false)
+
 
     @if (TempData["Toast"] is string toastJson)
     {
@@ -131,126 +130,10 @@
     }
 
 
-    @* <script>
-        (function () {
-            let isDirty = false;
-
-            document.addEventListener('input', function (e) {
-                if (e.target.closest('form.dirty-form')) {
-                    isDirty = true;
-                }
-            });
-
-            document.addEventListener('submit', function (e) {
-                if (e.target.closest('form.dirty-form')) {
-                    isDirty = false;
-                }
-            });
-
-            window.addEventListener('beforeunload', function (e) {
-                if (!isDirty) return;
-                e.preventDefault();
-                e.returnValue = '';
-            });
-
-            document.addEventListener('hide.bs.modal', function (e) {
-                if (window.isDirty) {
-                    if (!confirm("You have unsaved changes. Close anyway?")) {
-                        e.preventDefault();
-                    }
-                }
-            });
-        })();
-    </script> *@
-
-    @* <script>
-        (function () {
-
-            window.isDirty = false;
-            let pendingNavigation = null;
-
-            function isValidDirtyInput(el) {
-                return el.closest("form.dirty-form") &&
-                    el.type !== "hidden" &&
-                    !el.readOnly;
-            }
-
-            // Track per-field changes
-            document.addEventListener("input", function (e) {
-                if (!isValidDirtyInput(e.target)) return;
-
-                window.isDirty = true;
-                e.target.classList.add("dirty-field");
-            });
-
-            // Prevent browser close
-            window.addEventListener("beforeunload", function (e) {
-                if (!window.isDirty) return;
-                e.preventDefault();
-                e.returnValue = "";
-            });
-
-            // Clear dirty on SUBMIT
-            document.addEventListener("submit", function (e) {
-                if (!e.target.matches("form.dirty-form")) return;
-                window.isDirty = false;
-            });
-
-            // Bootstrap modal close protection
-            document.addEventListener("hide.bs.modal", function (e) {
-                if (!window.isDirty) return;
-
-                e.preventDefault();
-                pendingNavigation = () => bootstrap.Modal.getInstance(e.target).hide();
-
-                new bootstrap.Modal(document.getElementById("dirtyConfirmModal"))
-                    .show();
-            });
-
-            // Intercept LINKS
-            document.addEventListener("click", function (e) {
-                const link = e.target.closest("a");
-                if (!link || !window.isDirty) return;
-
-                e.preventDefault();
-                pendingNavigation = () => window.location = link.href;
-
-                new bootstrap.Modal(document.getElementById("dirtyConfirmModal"))
-                    .show();
-            });
-
-            // Confirm Leave
-            document.getElementById("dirtyContinue")?.addEventListener("click", function () {
-                window.isDirty = false;
-                bootstrap.Modal.getInstance(
-                    document.getElementById("dirtyConfirmModal")
-                ).hide();
-
-                if (pendingNavigation) pendingNavigation();
-            });
-
-            // Cancel Leave
-            document.getElementById("dirtyCancel")?.addEventListener("click", function () {
-                pendingNavigation = null;
-                bootstrap.Modal.getInstance(
-                    document.getElementById("dirtyConfirmModal")
-                ).hide();
-            });
-
-            // RESET dirty state manually
-            document.addEventListener("click", function (e) {
-                if (!e.target.classList.contains("dirty-reset")) return;
-
-                window.isDirty = false;
-                let form = e.target.closest("form.dirty-form");
-                form?.querySelectorAll(".dirty-field").forEach(x => x.classList.remove("dirty-field"));
-            });
-
-        })();
-    </script> *@
-
     <script>
         (function () {
+
+            const SHOW_Badges = false;
 
             const badge = document.getElementById("dirtyBadge");
             const modalBadge = document.getElementById("dirtyBadgeModal");
@@ -259,46 +142,34 @@
                 const count = form.querySelectorAll(".dirty-field").length;
 
                 [badge, modalBadge].forEach(b => {
-                    //if (!b) return;
-                    if (b) {
-                        b.textContent = `Unsaved (${count})`;
-                        if (count > 0) {
-                            //b.textContent = `Unsaved (${count})`;
-                            b.classList.remove("d-none");
-                        } else {
-                            b.classList.add("d-none");
-                        }
+                    if (!b) return;
+
+                    b.textContent = `Unsaved (${count})`;
+                    if (SHOW_Badges && count > 0) {
+                        b.classList.remove("d-none");
+                    } else {
+                        b.classList.add("d-none");
                     }
                 });
             }
 
-
-            window.isDirty = false;
             let pendingNavigation = null;
             let confirmOpen = false;
 
-            /*function showReset(form) {
-                const btn = form?.querySelector(".dirty-reset");
-                if (btn) btn.classList.remove("d-none");
-            }
-            function hideReset(form) {
-                const btn = form?.querySelector(".dirty-reset");
-                if (btn) btn.classList.add("d-none");
-            }*/
             function showReset(form) {
                 const btn = form?.querySelector(".dirty-reset");
                 if (!btn) return;
 
-                if (btn.classList.contains("d-none")) {
+                if (SHOW_Badges && btn.classList.contains("d-none")) {
                     btn.classList.remove("d-none");
 
-                    // trigger appear animation
                     btn.classList.add("dirty-reset-appear");
                     btn.addEventListener("animationend", () => {
                         btn.classList.remove("dirty-reset-appear");
                     }, { once: true });
                 }
             }
+
             function hideReset(form) {
                 const btn = form?.querySelector(".dirty-reset");
                 if (!btn) return;
@@ -306,111 +177,46 @@
                 btn.classList.add("d-none");
             }
 
-            document.querySelectorAll("form.dirty-form").forEach(f => hideReset(f));
-
+            document.querySelectorAll("form.dirty-form")
+                .forEach(f => hideReset(f));
 
             function isValidDirtyInput(el) {
-                return el.closest("form.dirty-form") &&
+                const form = el.closest("form.dirty-form");
+                return form &&
                     el.type !== "hidden" &&
                     !el.readOnly;
             }
 
-            // // Track per-field changes
-            // document.addEventListener("input", function (e) {
-            //     if (!isValidDirtyInput(e.target)) return;
-
-            //     const form = e.target.closest("form.dirty-form");
-
-            //     window.isDirty = true;
-            //     e.target.classList.add("dirty-field");
-
-            //     updateBadge(form);
-            // });
+            // ✅ Track per-form dirty state (NO GLOBALS)
             document.addEventListener("input", function (e) {
                 if (!isValidDirtyInput(e.target)) return;
 
                 const form = e.target.closest("form.dirty-form");
+                if (!form) return;
 
-                window.isDirty = true;
+                form.dataset.isDirty = "true";
                 e.target.classList.add("dirty-field");
 
-                showReset(form);        // ✅ SHOW RESET
+                showReset(form);
                 updateBadge(form);
             });
 
-
-            // Prevent browser close
+            // ✅ Browser close protection (checks ANY dirty form)
             window.addEventListener("beforeunload", function (e) {
-                if (!window.isDirty) return;
+                const anyDirty = document.querySelector("form[data-is-dirty='true']");
+                if (!anyDirty) return;
+
                 e.preventDefault();
                 e.returnValue = "";
             });
 
-            // // ✅ AUTO-RESET on NORMAL successful POST
-            // document.addEventListener("submit", function (e) {
-            //     if (!e.target.matches("form.dirty-form")) return;
-
-            //     window.isDirty = false;
-
-            //     const form = e.target;
-            //     form.querySelectorAll(".dirty-field")
-            //         .forEach(x => x.classList.remove("dirty-field"));
-
-            //     updateBadge(form);
-            // });
+            // ✅ AUTO-RESET on NORMAL successful POST
             document.addEventListener("submit", function (e) {
                 if (!e.target.matches("form.dirty-form")) return;
 
                 const form = e.target;
 
-                window.isDirty = false;
-
-                form.querySelectorAll(".dirty-field")
-                    .forEach(x => x.classList.remove("dirty-field"));
-
-                hideReset(form);        // ✅ HIDE RESET
-                updateBadge(form);
-            });
-
-
-            // Bootstrap modal close protection
-            document.addEventListener("hide.bs.modal", function (e) {
-                if (!window.isDirty || confirmOpen) return;
-
-                //confirmOpen = true;
-                if (!confirmOpen) {
-                    confirmOpen = true;
-
-                    new bootstrap.Modal(
-                        document.getElementById("dirtyConfirmModal")
-                    ).show();
-                }
-
-                e.preventDefault();
-
-                pendingNavigation = () =>
-                    bootstrap.Modal.getInstance(e.target).hide();
-
-                new bootstrap.Modal(
-                    document.getElementById("dirtyConfirmModal")
-                ).show();
-            });
-
-            // // Intercept LINKS
-            document.addEventListener("click", function (e) {
-                if (!e.target.classList.contains("dirty-reset")) return;
-
-                const btn = e.target;
-                const form = btn.closest("form.dirty-form");
-                if (!form) return;
-
-                // click pulse animation
-                btn.classList.add("dirty-reset-click");
-                btn.addEventListener("animationend", () => {
-                    btn.classList.remove("dirty-reset-click");
-                }, { once: true });
-
-                window.isDirty = false;
+                delete form.dataset.isDirty;
 
                 form.querySelectorAll(".dirty-field")
                     .forEach(x => x.classList.remove("dirty-field"));
@@ -419,11 +225,55 @@
                 updateBadge(form);
             });
 
+            // ✅ Bootstrap modal close protection (per-modal dirty tracking)
+            document.addEventListener("hide.bs.modal", function (e) {
+                const modalEl = e.target; // the modal that is about to close
+
+                // Look for a dirty form INSIDE this modal only
+                const dirtyForm = modalEl.querySelector("form.dirty-form[data-is-dirty='true']");
+                if (!dirtyForm || confirmOpen) return;
+
+                confirmOpen = true;
+
+                new bootstrap.Modal(
+                    document.getElementById("dirtyConfirmModal")
+                ).show();
+
+                e.preventDefault();
+
+                pendingNavigation = () =>
+                    bootstrap.Modal.getInstance(modalEl).hide();
+            });
+
+
+            // ✅ RESET via reset button
+            document.addEventListener("click", function (e) {
+                if (!e.target.classList.contains("dirty-reset")) return;
+
+                const btn = e.target;
+                const form = btn.closest("form.dirty-form");
+                if (!form) return;
+
+                btn.classList.add("dirty-reset-click");
+                btn.addEventListener("animationend", () => {
+                    btn.classList.remove("dirty-reset-click");
+                }, { once: true });
+
+                delete form.dataset.isDirty;
+
+                form.querySelectorAll(".dirty-field")
+                    .forEach(x => x.classList.remove("dirty-field"));
+
+                hideReset(form);
+                updateBadge(form);
+            });
 
             // Confirm Leave
             document.getElementById("dirtyContinue")?.addEventListener("click", function () {
-                window.isDirty = false;
                 confirmOpen = false;
+
+                document.querySelectorAll("form[data-is-dirty='true']")
+                    .forEach(f => delete f.dataset.isDirty);
 
                 document.querySelectorAll(".dirty-field")
                     .forEach(x => x.classList.remove("dirty-field"));
@@ -431,47 +281,34 @@
                 document.querySelectorAll("form.dirty-form")
                     .forEach(f => hideReset(f));
 
-                //if (badge) badge.classList.add("d-none");
                 [badge, modalBadge].forEach(b => b?.classList.add("d-none"));
 
-                const modalEl = document.getElementById("dirtyConfirmModal");
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
+                const confirmEl = document.getElementById("dirtyConfirmModal");
+                const confirmModal = bootstrap.Modal.getInstance(confirmEl);
+                if (confirmModal) confirmModal.hide();
 
-                // 🔥 HARD BACKDROP CLEANUP (prevents dark stacking)
-                document.querySelectorAll(".modal-backdrop").forEach(b => b.remove());
-                document.body.classList.remove("modal-open");
+                // ⚠️ DO NOT remove all backdrops here: let Bootstrap manage them
+                // No screenBlocker here either
 
                 if (pendingNavigation) pendingNavigation();
                 pendingNavigation = null;
+
+                setTimeout(() => {
+                    const modalEl = document.getElementById("appModal");
+                    if (modalEl) rebindFormValidationAndButtons(modalEl);
+                }, 50);
             });
+
             // Cancel Leave
             document.getElementById("dirtyCancel")?.addEventListener("click", function () {
                 confirmOpen = false;
                 pendingNavigation = null;
 
-                const modalEl = document.getElementById("dirtyConfirmModal");
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
+                const confirmEl = document.getElementById("dirtyConfirmModal");
+                const confirmModal = bootstrap.Modal.getInstance(confirmEl);
+                if (confirmModal) confirmModal.hide();
 
-                // 🔥 HARD BACKDROP CLEANUP
-                document.querySelectorAll(".modal-backdrop").forEach(b => b.remove());
-                document.body.classList.remove("modal-open");
-            });
-
-
-            // RESET dirty state manually
-            document.addEventListener("click", function (e) {
-                if (!e.target.classList.contains("dirty-reset")) return;
-
-                const form = e.target.closest("form.dirty-form");
-                if (!form) return;
-
-                window.isDirty = false;
-                form.querySelectorAll(".dirty-field")
-                    .forEach(x => x.classList.remove("dirty-field"));
-
-                updateBadge(form);
+                // Also no manual backdrop cleanup here.
             });
 
         })();

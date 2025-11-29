@@ -3,53 +3,19 @@
 
 // Write your JavaScript code.
 
-
-//// Make sure this file is included in _Layout.cshtml after bootstrap.bundle.js
-//window.appModal = {
-//    load: function (url) {
-//        fetch(url, { credentials: "same-origin" })
-//            .then(function (response) {
-//                if (!response.ok) {
-//                    throw new Error("Failed to load modal content: " + response.status);
-//                }
-//                return response.text();
-//            })
-//            .then(function (html) {
-//                var contentElement = document.getElementById("appModalContent");
-//                if (!contentElement) {
-//                    console.error("appModalContent element not found in DOM.");
-//                    return;
-//                }
-
-//                contentElement.innerHTML = html;
-
-//                var modalElement = document.getElementById("appModal");
-//                if (!modalElement) {
-//                    console.error("appModal element not found in DOM.");
-//                    return;
-//                }
-
-//                var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-//                modal.show();
-//            })
-//            .catch(function (err) {
-//                console.error(err);
-//            });
-//    }
-//};
+// ================================
+// FOCUS & VALIDATION HELPERS
+// ================================
 
 function focusFirstInput() {
     const modal = document.getElementById("appModalContent");
     if (!modal) return;
 
     const firstInput = modal.querySelector(
-        //"input:not([type=hidden]):not([disabled]), select, textarea"
-        //"input.form-control:not([type=hidden]):not([disabled])"
         "input.form-control:not([type=hidden]):not([disabled]), textarea.form-control, select.form-select"
     );
 
     if (firstInput) {
-        // Delay ensures the element is fully rendered
         setTimeout(() => {
             firstInput.focus();
             if (firstInput.select) firstInput.select();
@@ -62,7 +28,6 @@ function scrollToFirstInvalid() {
     if (!container) return;
 
     const firstInvalid = container.querySelector(".input-validation-error, .is-invalid");
-
     if (firstInvalid) {
         firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -73,7 +38,6 @@ function highlightFirstInvalidField() {
     if (!container) return;
 
     const firstInvalid = container.querySelector(".input-validation-error, .is-invalid");
-
     if (firstInvalid) {
         firstInvalid.classList.add("popup-invalid-highlight");
         firstInvalid.focus();
@@ -81,44 +45,99 @@ function highlightFirstInvalidField() {
     }
 }
 
-function showScreenBlocker() {
-    const blocker = document.getElementById("screenBlocker");
-    blocker.classList.remove("d-none");
-}
-function hideScreenBlocker() {
-    const blocker = document.getElementById("screenBlocker");
-    blocker.classList.add("d-none");
+// ✅ Your original helper kept
+function highlightInvalidFields() {
+    document.querySelectorAll('.field-validation-error').forEach(err => {
+        const input = err.closest('.mb-3')?.querySelector('input, select, textarea');
+        if (input) {
+            input.classList.add('is-invalid');
+        }
+    });
 }
 
-//function showToast(message) {
-//    document.getElementById("appToastMessage").innerText = message;
-//    const toastEl = document.getElementById("appToast");
-//    const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
-//    toast.show();
-//}
+// ================================
+// SCREEN BLOCKER
+// ================================
+
+function showScreenBlocker() {
+    const blocker = document.getElementById("screenBlocker");
+    blocker?.classList.remove("d-none");
+}
+
+function hideScreenBlocker() {
+    const blocker = document.getElementById("screenBlocker");
+    blocker?.classList.add("d-none");
+}
+
+// ================================
+// TOAST (UNCHANGED)
+// ================================
+
 function showToast(message, type = "success", icon = "check-circle") {
 
     const toastEl = document.getElementById("appToast");
     const msgEl = document.getElementById("appToastMessage");
     const iconEl = document.getElementById("appToastIcon");
 
-    // Clear previous color classes
     toastEl.classList.remove("toast-success", "toast-warning", "toast-info", "toast-danger");
-
-    // Add new color class
     toastEl.classList.add(`toast-${type}`);
 
-    // Set message and icon
     msgEl.innerText = message;
     iconEl.className = `bi bi-${icon}`;
 
-    // Show toast
     const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
     toast.show();
 }
 
+// ================================
+// CENTRALIZED MODAL CLEANUP  ✅
+// ================================
+
+function resetModalState() {
+
+    hideScreenBlocker();
+
+    document.querySelectorAll("form[data-is-dirty='true']")
+        .forEach(f => {
+            delete f.dataset.isDirty;
+            delete f.dataset.submitting;
+        });
+
+    document.querySelectorAll(".dirty-field")
+        .forEach(x => x.classList.remove("dirty-field"));
+
+    const badge = document.getElementById("dirtyBadge");
+    const modalBadge = document.getElementById("dirtyBadgeModal");
+    [badge, modalBadge].forEach(b => b?.classList.add("d-none"));
+
+    const placeholder = document.getElementById("popupAlertPlaceholder");
+    if (placeholder) placeholder.innerHTML = "";
+}
+
+document.getElementById("appModal")
+    ?.addEventListener("hidden.bs.modal", resetModalState);
+
+// ================================
+// DIRTY TRACKING ✅
+// ================================
+
+document.addEventListener("input", function (e) {
+    const form = e.target.closest("form");
+    if (!form) return;
+
+    form.dataset.isDirty = "true";
+    e.target.classList.add("dirty-field");
+
+    const badge = document.getElementById("dirtyBadgeModal");
+    badge?.classList.remove("d-none");
+});
+
+// ================================
+// MODAL CORE
+// ================================
 
 window.appModal = {
+
     load: function (url) {
         fetch(url, { credentials: "same-origin" })
             .then(r => r.text())
@@ -132,15 +151,19 @@ window.appModal = {
                 }
 
                 const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                // ‼️ attach focus event BEFORE show()
                 modalEl.addEventListener("shown.bs.modal", focusFirstInput, { once: true });
                 modal.show();
+
+                rebindFormValidationAndButtons(modalEl);
             })
             .catch(err => console.error(err));
     },
 
     submit: function (form) {
-        // 🔥 Block the entire screen during submit
+
+        if (form.dataset.submitting === "true") return false;
+        form.dataset.submitting = "true";
+
         showScreenBlocker();
 
         fetch(form.action, {
@@ -149,77 +172,69 @@ window.appModal = {
         })
             .then(r => r.text())
             .then(result => {
-                // Try JSON first (success case)
+
                 try {
                     const json = JSON.parse(result);
+
                     if (json.success) {
+
                         if (json.message) {
-                            console.log(json.message);
-                            //showToast(json.message || "Operation completed successfully!");
-                            //showToast(json.message, "success", "check-circle");
-                            showToast(json.message || "Operation completed successfully!", json.toastType, json.icon);
+                            showToast(
+                                json.message,
+                                json.toastType || "success",
+                                json.icon || "check-circle"
+                            );
                         }
 
                         const modalEl = document.getElementById("appModal");
-                        const modal = modalEl ? bootstrap.Modal.getInstance(modalEl) : null;
+                        const modal = modalEl
+                            ? bootstrap.Modal.getOrCreateInstance(modalEl)
+                            : null;
                         if (modal) modal.hide();
 
-                        // Optional: highlight updated row (if you re-render row-only)
-                        //document.querySelector(`#row-${json.id}`).classList.add("popup-field-updated");
-
-
-                        // after successful save in your fetch .then
-                        window.isDirty = false;
-                        document.querySelectorAll(".dirty-field")
-                            .forEach(x => x.classList.remove("dirty-field"));
-
-                        const badge = document.getElementById("dirtyBadge");
-                        const modalBadge = document.getElementById("dirtyBadgeModal");
-                        [badge, modalBadge].forEach(b => b?.classList.add("d-none"));
-
-
-                        const form = document.querySelector("form.dirty-form");
-                        if (form) hideReset(form);
-
-
-
-                        // delay reload so toast is visible
-                        if (json.message)
-                            setTimeout(() => location.reload(), 500);
-                        else
-                            location.reload();
+                        setTimeout(() => {
+                            const url = window.location.href.split("#")[0];
+                            window.location.replace(url);
+                        }, 350);
 
                         return false;
                     }
                 } catch {
-                    // Not JSON → it's HTML (validation errors)
+                    // Not JSON → HTML validation
                 }
 
-                // ❗ INVALID MODELSTATE (HTML returned)
-                // Unblock screen because we stay in popup
+                // ✅ INVALID MODELSTATE
                 hideScreenBlocker();
+                delete form.dataset.submitting;
 
-                // Load HTML (invalid model) back into modal and focus first field
                 document.getElementById("appModalContent").innerHTML = result;
-                focusFirstInput();   // modal already open, just refocus
 
+                focusFirstInput();
                 highlightFirstInvalidField();
                 scrollToFirstInvalid();
+
+                rebindFormValidationAndButtons();
+
+                highlightInvalidFields();
 
                 return false;
             })
             .catch(err => {
                 console.error(err);
-                // Unblock screen because we stay in popup
+
                 hideScreenBlocker();
+                delete form.dataset.submitting;
+
                 showToast("Error submitting form", "danger", "exclamation-triangle");
             });
 
-        return false; // prevent full page submit
+        return false;
     }
 };
 
-
+// ================================
+// ALERT HANDLING
+// ================================
 
 function showPopupAlert(message, type = "danger") {
     const placeholder = document.getElementById("popupAlertPlaceholder");
@@ -228,22 +243,16 @@ function showPopupAlert(message, type = "danger") {
     placeholder.innerHTML = `
         <div class="alert alert-${type} alert-dismissible fade show" role="alert">
             ${message}
-            @await Html.PartialAsync("DTO/UI/MODAL/_DismissButton", "alert")
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>`;
 }
 
-
-
-
-
-// When alert close button is clicked, close modal ONLY if "data-close-modal-on-alert=true"
 document.addEventListener('click', function (e) {
     if (e.target.matches('.alert .btn-close')) {
 
         const placeholder = e.target.closest('#popupAlertPlaceholder');
         if (placeholder) placeholder.innerHTML = "";
 
-        // Close modal only if _Details popup told us to
         if (placeholder && placeholder.dataset.closeModalOnAlert === "true") {
             const modalEl = document.getElementById('appModal');
             const modal = bootstrap.Modal.getInstance(modalEl);
@@ -252,21 +261,229 @@ document.addEventListener('click', function (e) {
     }
 });
 
-// When modal itself is closed, also clear alert content
-document.getElementById('appModal').addEventListener('hidden.bs.modal', function () {
-    const placeholder = document.getElementById('popupAlertPlaceholder');
-    if (placeholder) placeholder.innerHTML = "";
+
+
+// ================================
+// AUTO ENABLE/DISABLE SUBMIT BUTTON
+// ================================
+
+function updateSubmitButtonState(form) {
+    if (!form) return;
+
+    const submitBtn = form.querySelector(".js-form-submit");
+    if (!submitBtn) return;
+
+    // jQuery unobtrusive validation check
+    if ($(form).valid()) {
+        submitBtn.disabled = false;
+    } else {
+        submitBtn.disabled = true;
+    }
+}
+
+// ✅ Initial check on page load (full-page forms)
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("form").forEach(form => {
+        updateSubmitButtonState(form);
+    });
 });
 
-// Highlight invalid fields on popup rendering
-function highlightInvalidFields() {
-    document.querySelectorAll('.field-validation-error').forEach(err => {
-        const input = err.closest('.mb-3')?.querySelector('input, select, textarea');
-        if (input) {
-            input.classList.add('is-invalid');
-        }
-    });
+// ✅ Re-check on every input / change
+document.addEventListener("input", function (e) {
+    const form = e.target.closest("form");
+    if (!form) return;
+
+    updateSubmitButtonState(form);
+});
+
+document.addEventListener("change", function (e) {
+    const form = e.target.closest("form");
+    if (!form) return;
+
+    updateSubmitButtonState(form);
+});
+
+// ✅ After modal content is loaded via fetch (important!)
+document.addEventListener("shown.bs.modal", function (e) {
+    const modal = e.target;
+    const form = modal.querySelector("form");
+    if (!form) return;
+
+    updateSubmitButtonState(form);
+});
+
+// ✅ After modal validation error HTML is injected (important!)
+/*function rebindFormValidationAndButtons() {
+    const form = document.querySelector("#appModalContent form");
+    if (!form) return;
+
+    $.validator.unobtrusive.parse(form);
+    updateSubmitButtonState(form);
+}*/
+function rebindFormValidationAndButtons(container) {
+    const form = container
+        ? container.querySelector("form")
+        : document.querySelector("#appModalContent form");
+
+    if (!form) return;
+
+    // ✅ Destroy old validator (prevents stale bindings)
+    if ($(form).data("validator")) {
+        $(form).removeData("validator");
+        $(form).removeData("unobtrusiveValidation");
+    }
+
+    // ✅ Re-parse unobtrusive validation
+    $.validator.unobtrusive.parse(form);
+
+    // ✅ Immediately update submit button state
+    updateSubmitButtonState(form);
 }
 
 
+
+// ================================
+// FULL-PAGE VALIDATION REBIND
+// ================================
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("form").forEach(form => {
+        // ✅ Only care about forms that have submit buttons we manage
+        if (!form.querySelector(".js-form-submit")) return;
+
+        // ✅ Destroy any stale validator
+        if ($(form).data("validator")) {
+            $(form).removeData("validator");
+            $(form).removeData("unobtrusiveValidation");
+        }
+
+        // ✅ Re-parse unobtrusive validation
+        $.validator.unobtrusive.parse(form);
+
+        // ✅ Initialize button state correctly
+        updateSubmitButtonState(form);
+    });
+});
+
+
+
+
+
+
+// =======================================
+// HARD ENFORCE MAXLENGTH WHILE TYPING
+// =======================================
+
+document.addEventListener("input", function (e) {
+    const el = e.target;
+
+    if (!el.hasAttribute("maxlength")) return;
+
+    const max = parseInt(el.getAttribute("maxlength"));
+    if (!max) return;
+
+    if (el.value.length > max) {
+        el.value = el.value.substring(0, max);
+    }
+});
+
+// =======================================
+// LIVE MAXLENGTH CHARACTER COUNTER
+// + SOFT WARNING AT 90%
+// =======================================
+
+function updateCharCounter(el) {
+    const max = parseInt(el.getAttribute("maxlength"));
+    if (!max) return;
+
+    let counter = el.parentElement.querySelector(".char-counter");
+    if (!counter) return;
+
+    const length = el.value.length;
+    counter.textContent = `${length} / ${max}`;
+
+    // ✅ SOFT WARNING when 90% reached
+    if (length >= max * 0.9) {
+        counter.classList.add("text-danger", "fw-bold");
+    } else {
+        counter.classList.remove("text-danger", "fw-bold");
+    }
+}
+
+// Run on every keystroke
+document.addEventListener("input", function (e) {
+    const el = e.target;
+    if (!el.matches("[data-char-counter]")) return;
+
+    updateCharCounter(el);
+});
+
+// Init on full page load
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-char-counter]").forEach(updateCharCounter);
+});
+
+// Init when modal opens
+document.addEventListener("shown.bs.modal", function () {
+    document.querySelectorAll("[data-char-counter]").forEach(updateCharCounter);
+});
+
+// =======================================
+// AUTO "REQUIRED" BADGE FROM DATA-VAL
+// =======================================
+
+function markRequiredFields(container) {
+    container = container || document;
+
+    container.querySelectorAll("input, textarea, select").forEach(el => {
+
+        if (!el.hasAttribute("data-val-required")) return;
+
+        const id = el.getAttribute("id");
+        if (!id) return;
+
+        const label = container.querySelector(`label[for="${id}"]`);
+        if (!label || label.querySelector(".required-badge")) return;
+
+        const badge = document.createElement("span");
+        badge.className = "required-badge ms-1 text-danger fw-bold";
+        badge.textContent = "*";
+
+        label.appendChild(badge);
+    });
+}
+
+// Full page
+document.addEventListener("DOMContentLoaded", () => {
+    markRequiredFields(document);
+});
+
+// Modal
+document.addEventListener("shown.bs.modal", function () {
+    const modal = document.getElementById("appModalContent");
+    if (modal) markRequiredFields(modal);
+});
+
+
+// ================================
+// CUSTOM USERNAME VALIDATION
+// ================================
+
+document.addEventListener("blur", function (e) {
+    if (e.target.matches("input[name$='.Name']")) {
+        e.target.value = e.target.value.trim();
+    }
+}, true);
+
+$.validator.addMethod("username", function (value, element, params) {
+    if (!value) return true; // [Required] handles empties
+
+    const regex = new RegExp(params);
+    return regex.test(value);
+});
+
+$.validator.unobtrusive.adapters.add("username", ["pattern"], function (options) {
+    options.rules["username"] = options.params.pattern;
+    options.messages["username"] = options.message;
+});
 

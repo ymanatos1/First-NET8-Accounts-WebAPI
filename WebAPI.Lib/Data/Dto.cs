@@ -6,8 +6,12 @@ public class Dto
 {
     [Required]
     public int Id { get; set; }
+    
     [Required]
+    [MaxLength(40, ErrorMessage = "Description must not exceed 400 characters.")]
     public string Name { get; set; } = string.Empty;
+
+    [MaxLength(200, ErrorMessage = "Description must not exceed 200 characters.")]
     public string Description { get; set; } = string.Empty;
 
     public string AsString()
@@ -30,7 +34,7 @@ public interface IHasActive
 
 public class DtoWithActive : Dto, IHasActive
 {
-    [Required]
+    //[Required]
     public bool IsActive { get; set; }
 
 }
