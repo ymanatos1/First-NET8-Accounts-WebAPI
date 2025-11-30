@@ -25,11 +25,5 @@ RUN dotnet publish "./WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebAPI.dll"]
-
-# Final stage
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
 # Check the DLL name matches exactly!
 ENTRYPOINT ["dotnet", "WebAPI.dll"]

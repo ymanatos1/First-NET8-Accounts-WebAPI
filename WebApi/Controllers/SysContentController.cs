@@ -46,9 +46,7 @@ public class SysContentV1Controller : ControllerBase
         if (accountCategoriesResult.Result is OkObjectResult accountCategoriesOk)
             accountCategories = (IEnumerable<AccountCategory>?)accountCategoriesOk?.Value;
 
-        var sc = new SysContent();
-        sc.Accounts = accounts;
-        sc.AccountCategories = accountCategories;
+        var sc = new SysContent(accounts, accountCategories);
 
         return Ok(sc);
     }

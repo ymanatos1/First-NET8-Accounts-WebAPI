@@ -6,7 +6,7 @@ public class UsernameAttribute : ValidationAttribute, IClientModelValidator
 {
     private const string Pattern = @"^[A-Za-z][A-Za-z0-9_-]{0,19}$";
 
-    protected override ValidationResult IsValid(object value, ValidationContext context)
+    protected override ValidationResult? IsValid(object? value, ValidationContext context)
     {
         if (value == null)
             return ValidationResult.Success; // [Required] handles empties
