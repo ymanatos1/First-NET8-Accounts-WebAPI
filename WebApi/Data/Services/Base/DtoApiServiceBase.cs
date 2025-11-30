@@ -62,7 +62,7 @@ public abstract class DtoApiServiceBase<T>
             }
             if (!string.IsNullOrEmpty(q.Description))
             {
-                entries = entries.Where(a => a.Description.ToLower().Contains(q.Description.ToLower()));
+                entries = entries.Where(a => (a.Description ?? "").ToLower().Contains(q.Description.ToLower()));
             }
 
             if (!string.IsNullOrEmpty(q.SortBy))
