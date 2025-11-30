@@ -5,8 +5,8 @@ on:
     branches: [ master ]
 
 env:
-  IMAGE_NAME_API: ymwebapi1
-  IMAGE_NAME_MVC: ymwebappmvc1
+  IMAGE_API_NAME: ymwebapi1
+  IMAGE_MVC_NAME: ymwebappmvc1
   IMAGE_TAG: ${{ github.sha }}
   ACR_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   AZURE_WEBAPP_API_NAME: ymWebApi1
