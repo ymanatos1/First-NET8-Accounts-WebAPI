@@ -11,8 +11,9 @@ public class Dto
     [MaxLength(40, ErrorMessage = "Description must not exceed 400 characters.")]
     public string Name { get; set; } = string.Empty;
 
+
     [MaxLength(200, ErrorMessage = "Description must not exceed 200 characters.")]
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
 
     public string AsString()
     {

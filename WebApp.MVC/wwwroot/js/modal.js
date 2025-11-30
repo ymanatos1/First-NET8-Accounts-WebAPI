@@ -1,10 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-/*
-// ================================
+﻿// ================================
 // FOCUS & VALIDATION HELPERS
 // ================================
 
@@ -46,7 +40,7 @@ function highlightFirstInvalidField() {
     }
 }
 
-// ✅ Your original helper kept
+// ✅ Kept for compatibility
 function highlightInvalidFields() {
     document.querySelectorAll('.field-validation-error').forEach(err => {
         const input = err.closest('.mb-3')?.querySelector('input, select, textarea');
@@ -71,7 +65,7 @@ function hideScreenBlocker() {
 }
 
 // ================================
-// TOAST (UNCHANGED)
+// TOAST
 // ================================
 
 function showToast(message, type = "success", icon = "check-circle") {
@@ -91,7 +85,7 @@ function showToast(message, type = "success", icon = "check-circle") {
 }
 
 // ================================
-// CENTRALIZED MODAL CLEANUP  ✅
+// CENTRALIZED MODAL CLEANUP
 // ================================
 
 function resetModalState() {
@@ -118,26 +112,6 @@ function resetModalState() {
 document.getElementById("appModal")
     ?.addEventListener("hidden.bs.modal", resetModalState);
 
-*/
-
-/*
-// ================================
-// DIRTY TRACKING ✅
-// ================================
-
-document.addEventListener("input", function (e) {
-    const form = e.target.closest("form");
-    if (!form) return;
-
-    form.dataset.isDirty = "true";
-    e.target.classList.add("dirty-field");
-
-    const badge = document.getElementById("dirtyBadgeModal");
-    badge?.classList.remove("d-none");
-});
-*/
-
-/*
 // ================================
 // MODAL CORE
 // ================================
@@ -181,6 +155,7 @@ window.appModal = {
 
                 try {
                     const json = JSON.parse(result);
+
                     if (json.success) {
 
                         if (json.message) {
@@ -264,223 +239,4 @@ document.addEventListener('click', function (e) {
         }
     }
 });
-*/
 
-/*
-// ================================
-// AUTO ENABLE/DISABLE SUBMIT BUTTON
-// ================================
-
-function updateSubmitButtonState(form) {
-    if (!form) return;
-
-    const submitBtn = form.querySelector(".js-form-submit");
-    if (!submitBtn) return;
-
-    // jQuery unobtrusive validation check
-    if ($(form).valid()) {
-        submitBtn.disabled = false;
-    } else {
-        submitBtn.disabled = true;
-    }
-}
-
-// ✅ Initial check on page load (full-page forms)
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("form").forEach(form => {
-        updateSubmitButtonState(form);
-    });
-});
-
-// ✅ Re-check on every input / change
-document.addEventListener("input", function (e) {
-    const form = e.target.closest("form");
-    if (!form) return;
-
-    updateSubmitButtonState(form);
-});
-
-document.addEventListener("change", function (e) {
-    const form = e.target.closest("form");
-    if (!form) return;
-
-    updateSubmitButtonState(form);
-});
-
-// ✅ After modal content is loaded via fetch (important!)
-document.addEventListener("shown.bs.modal", function (e) {
-    const modal = e.target;
-    const form = modal.querySelector("form");
-    if (!form) return;
-
-    updateSubmitButtonState(form);
-});
-
-// ✅ After modal validation error HTML is injected (important!)
-function rebindFormValidationAndButtons(container) {
-    const form = container
-        ? container.querySelector("form")
-        : document.querySelector("#appModalContent form");
-
-    if (!form) return;
-
-    // ✅ Destroy old validator (prevents stale bindings)
-    if ($(form).data("validator")) {
-        $(form).removeData("validator");
-        $(form).removeData("unobtrusiveValidation");
-    }
-
-    // ✅ Re-parse unobtrusive validation
-    $.validator.unobtrusive.parse(form);
-
-    // ✅ Immediately update submit button state
-    updateSubmitButtonState(form);
-}
-*/
-
-/*
-// ================================
-// FULL-PAGE VALIDATION REBIND
-// ================================
-
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("form").forEach(form => {
-        // ✅ Only care about forms that have submit buttons we manage
-        if (!form.querySelector(".js-form-submit")) return;
-
-        // ✅ Destroy any stale validator
-        if ($(form).data("validator")) {
-            $(form).removeData("validator");
-            $(form).removeData("unobtrusiveValidation");
-        }
-
-        // ✅ Re-parse unobtrusive validation
-        $.validator.unobtrusive.parse(form);
-
-        // ✅ Initialize button state correctly
-        updateSubmitButtonState(form);
-    });
-});
-*/
-
-
-
-
-/*
-// =======================================
-// HARD ENFORCE MAXLENGTH WHILE TYPING
-// =======================================
-
-document.addEventListener("input", function (e) {
-    const el = e.target;
-
-    if (!el.hasAttribute("maxlength")) return;
-
-    const max = parseInt(el.getAttribute("maxlength"));
-    if (!max) return;
-
-    if (el.value.length > max) {
-        el.value = el.value.substring(0, max);
-    }
-});
-
-// =======================================
-// LIVE MAXLENGTH CHARACTER COUNTER
-// + SOFT WARNING AT 90%
-// =======================================
-
-function updateCharCounter(el) {
-    const max = parseInt(el.getAttribute("maxlength"));
-    if (!max) return;
-
-    let counter = el.parentElement.querySelector(".char-counter");
-    if (!counter) return;
-
-    const length = el.value.length;
-    counter.textContent = `${length} / ${max}`;
-
-    // ✅ SOFT WARNING when 90% reached
-    if (length >= max * 0.9) {
-        counter.classList.add("text-danger", "fw-bold");
-    } else {
-        counter.classList.remove("text-danger", "fw-bold");
-    }
-}
-
-// Run on every keystroke
-document.addEventListener("input", function (e) {
-    const el = e.target;
-    if (!el.matches("[data-char-counter]")) return;
-
-    updateCharCounter(el);
-});
-
-// Init on full page load
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("[data-char-counter]").forEach(updateCharCounter);
-});
-
-// Init when modal opens
-document.addEventListener("shown.bs.modal", function () {
-    document.querySelectorAll("[data-char-counter]").forEach(updateCharCounter);
-});
-
-// =======================================
-// AUTO "REQUIRED" BADGE FROM DATA-VAL
-// =======================================
-
-function markRequiredFields(container) {
-    container = container || document;
-
-    container.querySelectorAll("input, textarea, select").forEach(el => {
-
-        if (!el.hasAttribute("data-val-required")) return;
-
-        const id = el.getAttribute("id");
-        if (!id) return;
-
-        const label = container.querySelector(`label[for="${id}"]`);
-        if (!label || label.querySelector(".required-badge")) return;
-
-        const badge = document.createElement("span");
-        badge.className = "required-badge ms-1 text-danger fw-bold";
-        badge.textContent = "*";
-
-        label.appendChild(badge);
-    });
-}
-
-// Full page
-document.addEventListener("DOMContentLoaded", () => {
-    markRequiredFields(document);
-});
-
-// Modal
-document.addEventListener("shown.bs.modal", function () {
-    const modal = document.getElementById("appModalContent");
-    if (modal) markRequiredFields(modal);
-});
-
-
-// ================================
-// CUSTOM USERNAME VALIDATION
-// ================================
-
-document.addEventListener("blur", function (e) {
-    if (e.target.matches("input[name$='.Name']")) {
-        e.target.value = e.target.value.trim();
-    }
-}, true);
-
-$.validator.addMethod("username", function (value, element, params) {
-    if (!value) return true; // [Required] handles empties
-
-    const regex = new RegExp(params);
-    return regex.test(value);
-});
-
-$.validator.unobtrusive.adapters.add("username", ["pattern"], function (options) {
-    options.rules["username"] = options.params.pattern;
-    options.messages["username"] = options.message;
-});
-*/
