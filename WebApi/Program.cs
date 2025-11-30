@@ -67,14 +67,14 @@ var app = builder.Build();
 //app.Urls.Add($"http://*:{port}");
 //var port = Environment.GetEnvironmentVariable("PORT");
 //var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+/*var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 if (!string.IsNullOrEmpty(port))
 {
     //builder.WebHost.UseUrls($"http://*:{port}");
     app.Urls.Add($"http://*:{port}");
     //builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-}
+}*/
 
 databaseInitializer.ConfigureServices(app);
 
