@@ -1,10 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace WebAPI.Data.Models;
 
 public class AccountCategory : Dto
 {
     [JsonIgnore]
-    public virtual List<Account>? Accounts { get; set; } = null;
+    public virtual IEnumerable<Account>? Accounts { get; set; } = null;
 
 }
