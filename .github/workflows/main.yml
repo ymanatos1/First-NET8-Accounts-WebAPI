@@ -2,7 +2,7 @@ name: Build, Test, Push Docker to ACR & Deploy to Azure
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   IMAGE_NAME: ymwebapi1
