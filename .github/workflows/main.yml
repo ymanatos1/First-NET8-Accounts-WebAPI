@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: ymwebapi1
-  IMAGE_TAG: latest
+  IMAGE_TAG: ${{ github.sha }}
   ACR_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   AZURE_WEBAPP_NAME: ymWebApi1
   DOCKERFILE_PATH: WebApi/Dockerfile       # ←✅ corrected path
@@ -40,7 +40,7 @@ jobs:
 
     - name: 🐳 Build and push Docker image to ACR
       run: |
-        docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.CONTEXT_PATH }}
+        docker build --no-cache -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.CONTEXT_PATH }}
         docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
 
   deploy:
