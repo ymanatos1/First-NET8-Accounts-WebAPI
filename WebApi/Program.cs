@@ -75,8 +75,8 @@ if (!string.IsNullOrEmpty(port))
     //builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 }*/
-var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
-app.Urls.Add($"http://*:{port}");
+/*var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
+app.Urls.Add($"http://*:{port}");*/
 
 
 databaseInitializer.ConfigureServices(app);
@@ -123,10 +123,6 @@ app.MapControllers();
 //        }
 //    });
 //});
-
-// Make the service provider globally accessible
-//ServiceLocator.Provider = app.Services;
-//ServiceLocator.InMemoryAccountsDB = app.Services;
 
 app.Run();
 
