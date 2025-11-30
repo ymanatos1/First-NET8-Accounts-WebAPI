@@ -82,18 +82,18 @@ app.Urls.Add($"http://*:{port}");*/
 databaseInitializer.ConfigureServices(app);
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // This is needed for deployment to Azure App Service, for proper Container API listening port 80
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
+    app.Urls.Add($"http://*:{port}");
 
     app.UseHsts();  // Production only
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
 
