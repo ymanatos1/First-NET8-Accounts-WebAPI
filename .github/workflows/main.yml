@@ -1,0 +1,61 @@
+name: Build, Test, Push Docker to ACR & Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  IMAGE_NAME: ymwebapi1
+  IMAGE_TAG: latest
+  ACR_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  AZURE_WEBAPP_NAME: ymWebApi1              # <-- change this
+  DOCKERFILE_PATH: WebAPI/Dockerfile        # <-- adjust if needed
+  CONTEXT_PATH: .                           # usually root
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🛒 Checkout code
+      uses: actions/checkout@v3
+
+    - name: ⚙️ Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: 📦 Restore
+      run: dotnet restore WebAPI1.sln
+
+    - name: 🧱 Build
+      run: dotnet build WebAPI1.sln --configuration Release --no-restore
+
+    - name: 🧪 Test
+      run: dotnet test WebAPI.UnitTests/WebAPI.UnitTests.csproj --no-build --configuration Release
+
+    - name: 🔐 Log in to Azure Container Registry
+      run: |
+        echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_LOGIN_SERVER }} -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+    - name: 🐳 Build and push Docker image to ACR
+      run: |
+        docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f ${{ env.DOCKERFILE_PATH }} ${{ env.CONTEXT_PATH }}
+        docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+  deploy:
+    name: 🚀 Deploy container to Azure Web App
+    runs-on: ubuntu-latest
+    needs: build-test-publish
+
+    steps:
+    - name: 🔐 Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} # optional, needed for slot config
+
+    - name: 🧩 Configure container image on Web App
+      uses: azure/webapps-container-deploy@v1
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        images: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
