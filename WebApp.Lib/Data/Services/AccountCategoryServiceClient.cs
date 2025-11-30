@@ -20,29 +20,4 @@ public class AccountCategoryServiceClient : DtoApiServiceClientBase<AccountCateg
     {
     }
 
-    //public new async Task<IEnumerable<AccountCategory>> GetAsync()
-    //{
-    //    return await base.GetAsync();
-    //}
-
-    //public new async Task<AccountCategory?> GetByIdAsync(int id)
-    //{
-    //    return await base.GetByIdAsync(id);
-    //}
-
-    //public new async Task<AccountCategory?> AddAsync(AccountCategory entry)
-    //{
-    //    return await base.AddAsync(entry);
-    //}
-
-    //public new async Task<bool> UpdateAsync(int id, AccountCategory entry)
-    //{
-    //    return await base.UpdateAsync(id, entry);
-    //}
-
-    //public new async Task<bool> RemoveByIdAsync(int id)
-    //{
-    //    return await base.RemoveByIdAsync(id);
-    //}
-
 }

@@ -25,6 +25,7 @@ public abstract class DtoApiServiceClientBase<T, TT> : IDtoServiceClient<T, TT>
     private readonly IConfiguration _configuration;
 
     private readonly string DEFAULT_API_URL = "https://localhost:7171/";
+    //private readonly string DEFAULT_API_URL = "https://localhost:7171/";
     private readonly string DEFAULT_API_VERSION = "1.0";
     //private const string API_PATH = "api/accounts/";
 

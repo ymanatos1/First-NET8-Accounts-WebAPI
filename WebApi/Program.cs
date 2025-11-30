@@ -60,6 +60,14 @@ services.AddCors(options =>
     });
 });
 
+//var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+//app.Urls.Add($"http://*:{port}");
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    builder.WebHost.UseUrls($"http://*:{port}");
+}
+
 var app = builder.Build();
 
 
@@ -73,6 +81,9 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
     app.UseHsts();  // Production only
 }
 
