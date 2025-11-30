@@ -75,6 +75,9 @@ if (!string.IsNullOrEmpty(port))
     //builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 }*/
+var port = Environment.GetEnvironmentVariable("PORT") ?? "80";
+app.Urls.Add($"http://*:{port}");
+
 
 databaseInitializer.ConfigureServices(app);
 
