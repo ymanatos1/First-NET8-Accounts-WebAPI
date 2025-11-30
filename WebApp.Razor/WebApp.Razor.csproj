@@ -8,13 +8,18 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-  </ItemGroup>
+	<PropertyGroup>
+		<EnableDefaultContentItems>true</EnableDefaultContentItems>
+		<EnableStaticWebAssets>true</EnableStaticWebAssets>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\WebAPI.Lib\WebAPI.Lib.csproj" />
-    <ProjectReference Include="..\WebApp.Lib\WebApp.Lib.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\WebApp.Assets.Lib\WebApp.Assets.Lib.csproj" />
+		<ProjectReference Include="..\WebApp.Lib\WebApp.Lib.csproj" />
+	</ItemGroup>
 
 </Project>
