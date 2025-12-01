@@ -5,6 +5,7 @@ on:
     branches: [ master ]
 
 env:
+  DEPLOY_API: false  # ← Toggle this to true when you want full API & clients build/dempoy, or false when you want clients-only build/deploy
   IMAGE_API_NAME: ymwebapi1
   IMAGE_MVC_NAME: ymwebappmvc1
   IMAGE_TAG: latest
@@ -43,6 +44,7 @@ jobs:
         echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_LOGIN_SERVER }} -u ${{ secrets.ACR_USERNAME }} --password-stdin
 
     - name: 🐳 Build and push Docker WebAPI image to ACR
+      if: ${{ env.DEPLOY_API == 'true' }}
       run: |
         docker build --no-cache -t "${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_API_NAME }}:${{ env.IMAGE_TAG }}" -f "${{ env.DOCKERFILE_API_PATH }}" "${{ env.CONTEXT_PATH }}"
         docker push "${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_API_NAME }}:${{ env.IMAGE_TAG }}"
@@ -64,6 +66,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }} # optional, needed for slot config
 
     - name: 🧩 Deploy WebAPI Container
+      if: ${{ env.DEPLOY_API == 'true' }}
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_API_NAME }}
