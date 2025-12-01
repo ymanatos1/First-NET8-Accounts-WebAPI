@@ -1,5 +1,5 @@
-name: "Read Deploy Flag"
-description: "Reads the DEPLOY flag from a project directory and outputs 'true' or 'false'. Defaults to true."
+name: Read Deploy Flag
+description: Reads DEPLOY file and outputs deploy=true|false
 inputs:
   path:
     description: "Relative path to the project folder containing DEPLOY file"
@@ -10,17 +10,19 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: read_flag
+    - shell: bash
       run: |
-        file="${{ inputs.path }}/DEPLOY"
-        if [ -f "$file" ]; then
-          first_line=$(head -n 1 "$file" | tr -d '\r')
-          if echo "$first_line" | grep -qiE '^deploy=false$'; then
-            echo "deploy=false" >> $GITHUB_OUTPUT
-          else
-            echo "deploy=true" >> $GITHUB_OUTPUT
-          fi
+        FILE="${{ inputs.path }}/DEPLOY"
+
+        if [ ! -f "$FILE" ]; then
+          echo "deploy=true" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        VALUE=$(head -n 1 "$FILE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z=]//g')
+
+        if [[ "$VALUE" == "deploy=false" ]]; then
+          echo "deploy=false" >> $GITHUB_OUTPUT
         else
           echo "deploy=true" >> $GITHUB_OUTPUT
         fi
-      shell: bash
